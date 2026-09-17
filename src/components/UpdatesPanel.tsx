@@ -45,7 +45,7 @@ export function UpdatesPanel({ version, result, onBack, onResult }: UpdatesPanel
           {result?.ok && result.available ? (
             <button
               className="btn primary"
-              onClick={() => qr.openExternal(result.download || result.url || 'https://github.com/ritviksajeev/qres/releases')}
+              onClick={() => qr.openExternal(result.download || result.url || 'https://github.com/ritviksajeev/Qres/releases')}
             >
               Download
             </button>

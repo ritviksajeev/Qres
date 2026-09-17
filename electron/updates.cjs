@@ -5,7 +5,7 @@
 
 const { net, app } = require('electron');
 
-const RELEASES = 'https://api.github.com/repos/ritviksajeev/qres/releases/latest';
+const RELEASES = 'https://api.github.com/repos/ritviksajeev/Qres/releases/latest';
 
 function fetchJson(url) {
   return new Promise((resolve, reject) => {
@@ -67,7 +67,7 @@ async function check() {
     latest: String(latest).replace(/^v/i, ''),
     available: isNewer(latest, current),
     notes: release.body || '',
-    url: release.html_url || 'https://github.com/ritviksajeev/qres/releases',
+    url: release.html_url || 'https://github.com/ritviksajeev/Qres/releases',
     download: asset ? asset.browser_download_url : null,
     downloadName: asset ? asset.name : null,
     publishedAt: release.published_at || null,

@@ -48,7 +48,7 @@ That is the whole product. Everything else exists to make that one thing reliabl
 
 ## Install
 
-Grab the latest from [Releases](https://github.com/ritviksajeev/qres/releases):
+Grab the latest from [Releases](https://github.com/ritviksajeev/Qres/releases):
 
 - **`QuickRes-Setup-x.y.z-win-x64.exe`** — installer, adds a Start Menu entry
 - **`QuickRes-x.y.z-win-x64.zip`** — portable, extract and run

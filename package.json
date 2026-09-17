@@ -9,7 +9,7 @@
   "homepage": "https://evzero.org/quickres",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ritviksajeev/qres.git"
+    "url": "https://github.com/ritviksajeev/Qres.git"
   },
   "scripts": {
     "dev": "concurrently -k -n vite,electron -c magenta,cyan \"npm:dev:renderer\" \"npm:dev:main\"",

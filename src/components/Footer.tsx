@@ -33,7 +33,7 @@ export function Footer({ panel, onPanel, updateAvailable }: FooterProps) {
 
       <button
         className="footer-github"
-        onClick={() => qr.openExternal('https://github.com/ritviksajeev/qres')}
+        onClick={() => qr.openExternal('https://github.com/ritviksajeev/Qres')}
       >
         <GitHub />
         GitHub
