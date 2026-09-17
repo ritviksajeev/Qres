@@ -1,0 +1,45 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      - name: Typecheck and bundle the renderer
+        run: npm run build
+
+      # The display helper is compiled at runtime, but building it here catches
+      # a syntax error in the Win32 layer before anyone downloads it.
+      - name: Compile the display helper
+        shell: pwsh
+        run: |
+          $csc = "$env:WINDIR\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
+          & $csc /nologo /target:exe /out:"$env:RUNNER_TEMP\qrdisplay.exe" native\QuickResDisplay.cs
+          if ($LASTEXITCODE -ne 0) { exit 1 }
+
+      - name: Package
+        run: npm run dist
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: quickres-win-x64
+          path: |
+            release/*.exe
+            release/*.zip
+          if-no-files-found: error

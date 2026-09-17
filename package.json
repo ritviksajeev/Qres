@@ -1,0 +1,84 @@
+{
+  "name": "quickres",
+  "version": "1.0.0",
+  "description": "Change your monitor resolution and refresh rate from a hotkey.",
+  "author": "EvZero <hi@evzero.org>",
+  "license": "MIT",
+  "private": true,
+  "main": "electron/main.cjs",
+  "homepage": "https://evzero.org/quickres",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ritviksajeev/qres.git"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n vite,electron -c magenta,cyan \"npm:dev:renderer\" \"npm:dev:main\"",
+    "dev:renderer": "vite",
+    "dev:main": "wait-on tcp:127.0.0.1:5183 && cross-env VITE_DEV_SERVER_URL=http://localhost:5183 electron .",
+    "typecheck": "tsc --noEmit",
+    "build": "npm run typecheck && vite build",
+    "dist": "npm run build && electron-builder --win --x64",
+    "dist:dir": "npm run build && electron-builder --win --x64 --dir",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "electron-store": "^8.2.0"
+  },
+  "devDependencies": {
+    "@fontsource/inter": "^5.1.0",
+    "@fontsource/jetbrains-mono": "^5.1.1",
+    "@fontsource/unbounded": "^5.1.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.4",
+    "concurrently": "^9.1.0",
+    "cross-env": "^7.0.3",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.7.2",
+    "vite": "^5.4.11",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "org.evzero.quickres",
+    "productName": "QuickRes",
+    "copyright": "Copyright © 2026 EvZero",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "build/icon.png",
+      "build/tray.png",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "native",
+        "to": "native",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "icon": "build/icon.png",
+      "target": [
+        { "target": "nsis", "arch": ["x64"] },
+        { "target": "zip", "arch": ["x64"] }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "QuickRes",
+      "artifactName": "QuickRes-Setup-${version}-win-x64.${ext}"
+    },
+    "portable": {
+      "artifactName": "QuickRes-${version}-win-x64.${ext}"
+    }
+  }
+}
