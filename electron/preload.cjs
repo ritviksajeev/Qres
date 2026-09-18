@@ -24,6 +24,16 @@ contextBridge.exposeInMainWorld('qres', {
   revertChanges: () => ipcRenderer.invoke('qr:confirm-revert'),
 
   checkUpdates: () => ipcRenderer.invoke('qr:check-updates'),
+
+  uninstallPlan: () => ipcRenderer.invoke('qr:uninstall-plan'),
+  uninstallRun: () => ipcRenderer.invoke('qr:uninstall-run'),
+  quit: () => ipcRenderer.invoke('qr:quit'),
+
+  trayMenuGet: () => ipcRenderer.invoke('qr:tray-menu-get'),
+  trayMenuSize: (width, height) => ipcRenderer.invoke('qr:tray-menu-size', { width, height }),
+  trayMenuAction: (id) => ipcRenderer.invoke('qr:tray-menu-action', id),
+  trayMenuClose: () => ipcRenderer.invoke('qr:tray-menu-close'),
+  onTrayMenuModel: listen('qr:tray-menu-model'),
   openExternal: (url) => ipcRenderer.invoke('qr:open-external', url),
   window: (action) => ipcRenderer.invoke('qr:window', action),
 

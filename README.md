@@ -10,7 +10,8 @@ Built for stretched-res players who are tired of Windows Settings → System →
 
 Windows 10/11 · x64 · MIT
 
-<img src="docs/screenshot-dark.png" width="360" alt="Qres window" />
+<img src="docs/screenshot-dark.png" width="330" alt="Qres window" />
+<img src="docs/screenshot-tray.png" width="260" alt="Qres tray menu" />
 
 </div>
 
@@ -26,13 +27,15 @@ That is the whole product. Everything else exists to make that one thing reliabl
 
 **Quick resolutions** — A grid generated from what your panel actually reports: its native mode, the stretched widths that keep its vertical lines (4:3, 3:2, 16:10), and same-shape lower resolutions for when you want frames instead of pixels. Every tile is one click.
 
-**Global hotkey toggle** — Bind a key (default `F6`) to flip between a native and a stretched mode. Works from inside a fullscreen game. Pick the pair once; the tray menu and the hotkey both use it.
+**Global hotkey toggle** — Click the key field, press whatever combination you want, and it records what you actually pressed. Works from inside a fullscreen game. Pick the native/stretched pair once; the tray menu and the hotkey both use it.
 
-**Extra hotkeys** — Bind additional keys straight to a single resolution, on top of the toggle.
+**Extra hotkeys** — Bind additional combinations straight to a single resolution, on top of the toggle.
 
 **Refresh rate control** — Every change carries a refresh rate. Leave it on *Highest available* and Qres asks the display for its fastest rate **at that resolution**, so dropping to 1440×1080 keeps your 240 Hz instead of quietly falling back to 60. Or pin a specific rate.
 
 **Per-monitor targeting** — `Auto` changes whichever monitor your mouse is on when the hotkey fires, which is the one you are playing on. Or pin a specific display.
+
+**Rename your monitors** — "LG ULTRAGEAR" becomes "Main" or "TV". The name is stored against the monitor's hardware id rather than its `\\.\DISPLAYn` slot, so it survives replugging and reordering.
 
 **Game profiles** — Name a process (`VALORANT-Win64-Shipping.exe`) and a resolution. Qres switches when the game launches and puts native back when it exits. No hotkey needed.
 
@@ -40,11 +43,9 @@ That is the whole product. Everything else exists to make that one thing reliabl
 
 **Custom resolution** — Type anything. Qres validates it against the driver before applying.
 
-**Tray resident** — Closing the window keeps the hotkey live. The tray menu shows the current mode and both toggle targets.
+**Tray resident** — The window's X hides to the tray and Qres keeps running, so the hotkey stays live; minimise behaves normally and quitting is the tray menu's job. That menu is drawn by the app rather than by Windows, so it carries the same theme as everything else.
 
 **Start with Windows** — Launches hidden, so the hotkey works before you open anything.
-
-**Translucent** — On Windows 11 the window uses the acrylic backdrop, so it frosts the desktop behind it rather than covering it. Every panel, tile and field is a frosted layer over that. Turn it off in Settings; on Windows 10, where there is no acrylic backdrop to use, it stays opaque.
 
 **Light and dark** — Same purple either way.
 
@@ -91,6 +92,12 @@ No SDK to install, no `node-gyp`, no committed binary, and the helper is indepen
 ```
 
 If `csc.exe` is missing, it falls back to compiling the same source in-memory through PowerShell.
+
+## Uninstalling
+
+Settings → Danger zone → **Uninstall Qres**. It clears the settings file, the cached display helper and the start-with-Windows entry, then hands over to the Windows uninstaller if you used the installer. A portable copy has nothing registered to remove, so it tells you which folder is left to delete.
+
+You can also use Windows Settings → Apps, if you installed with the `.exe`; that removes the program but leaves `%APPDATA%\Qres` behind, which you can delete by hand.
 
 ## Where it keeps things
 

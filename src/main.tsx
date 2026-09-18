@@ -13,12 +13,17 @@ import '@fontsource/unbounded/700.css';
 import './styles/theme.css';
 import './styles/app.css';
 import App from './App';
+import TrayMenu from './TrayMenu';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('#root is missing from index.html');
 
+// The tray menu is a second window on the same bundle, told apart by its hash.
+const isTrayMenu = window.location.hash === '#traymenu';
+if (isTrayMenu) document.documentElement.dataset.surface = 'traymenu';
+
 createRoot(root).render(
   <StrictMode>
-    <App />
+    {isTrayMenu ? <TrayMenu /> : <App />}
   </StrictMode>,
 );

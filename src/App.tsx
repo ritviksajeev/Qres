@@ -55,12 +55,10 @@ export default function App() {
   }, []);
 
   const theme = state?.settings.theme ?? 'dark';
-  const translucent = state?.effects.translucent ?? false;
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    document.documentElement.dataset.translucent = translucent ? 'on' : 'off';
-  }, [theme, translucent]);
+  }, [theme]);
 
   // A quiet check on launch; the badge in the footer is the only nag.
   useEffect(() => {
@@ -130,7 +128,7 @@ export default function App() {
     <div className={`app${panel ? ' panel-open' : ''}`}>
       <div className="app-grain" aria-hidden="true" />
 
-      <TitleBar version={state.version} minimizeToTray={settings.minimizeToTray} />
+      <TitleBar version={state.version} />
 
       <Header
         settings={settings}
@@ -193,8 +191,10 @@ export default function App() {
         <MonitorsPanel
           displays={state.displays}
           activeId={state.activeId}
+          settings={settings}
           onBack={closePanel}
           onRefresh={refreshDisplays}
+          onRename={(names) => set('monitorNames', names)}
         />
       ) : null}
 
@@ -212,7 +212,6 @@ export default function App() {
         <SettingsPanel
           settings={settings}
           display={display}
-          acrylicSupported={state.effects.acrylicSupported}
           onBack={closePanel}
           onSet={set}
           onRestoreDefaults={() => void qr.restoreDefaults().then(refreshDisplays)}

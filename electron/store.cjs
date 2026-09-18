@@ -7,7 +7,6 @@ const Store = require('electron-store');
 // first time Qres sees it.
 const defaults = {
   theme: 'dark',
-  translucent: true,              // acrylic backdrop on Windows 11; ignored elsewhere
   targetDisplay: 'auto',          // 'auto' (monitor under the cursor) | 'primary' | device id
   refresh: 'max',                 // 'max' keeps the highest rate the panel offers
   persistMode: true,              // write the mode to the registry so it survives a reboot
@@ -27,8 +26,8 @@ const defaults = {
   watcherEnabled: false,
   startOnLogin: false,
   startMinimized: false,
-  minimizeToTray: true,
   checkUpdates: true,
+  monitorNames: {},               // { [monitor hardware id]: custom label }
   lastSeenVersion: null,
   window: { width: 400, height: 704, x: null, y: null },
 };

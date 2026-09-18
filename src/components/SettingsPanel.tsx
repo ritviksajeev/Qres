@@ -2,32 +2,35 @@ import { useState } from 'react';
 import { Panel } from './Panel';
 import { Select, Switch } from './Select';
 import { Trash } from './Icons';
+import { HotkeyInput } from './HotkeyInput';
 import { Res, SectionHead } from './SectionHead';
-import { HOTKEY_CHOICES, uid } from '../lib/ipc';
+import { UninstallDialog } from './UninstallDialog';
+import { uid } from '../lib/ipc';
 import { parseResolution } from '../lib/presets';
 import type { DisplayInfo, PresetHotkey, Settings } from '../lib/types';
 
 interface SettingsPanelProps {
   settings: Settings;
   display: DisplayInfo | null;
-  acrylicSupported: boolean;
   onBack: () => void;
   onSet: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
   onRestoreDefaults: () => void;
 }
 
-export function SettingsPanel({ settings, display, acrylicSupported, onBack, onSet, onRestoreDefaults }: SettingsPanelProps) {
-  const [accelerator, setAccelerator] = useState('Ctrl+Alt+R');
+export function SettingsPanel({ settings, display, onBack, onSet, onRestoreDefaults }: SettingsPanelProps) {
+  const [accelerator, setAccelerator] = useState('');
   const [res, setRes] = useState(display ? `${display.native.width}x${display.native.height}` : '');
   const [error, setError] = useState<string | null>(null);
+  const [uninstalling, setUninstalling] = useState(false);
 
   const addHotkey = () => {
     const parsed = parseResolution(res);
+    if (!accelerator) return setError('Press a key combination first.');
     if (!parsed) return setError('Resolution should look like 1920x1080.');
     if (settings.presetHotkeys.some((entry) => entry.accelerator === accelerator)) {
       return setError(`${accelerator} is already bound.`);
     }
-    if (settings.hotkey.accelerator === accelerator && settings.hotkey.enabled) {
+    if (settings.hotkey.accelerator === accelerator) {
       return setError(`${accelerator} is the toggle hotkey.`);
     }
 
@@ -37,6 +40,7 @@ export function SettingsPanel({ settings, display, acrylicSupported, onBack, onS
       { id: uid(), accelerator, width: parsed.width, height: parsed.height, refresh: 'max' },
     ];
     onSet('presetHotkeys', next);
+    setAccelerator('');
   };
 
   const removeHotkey = (id: string) => {
@@ -45,19 +49,6 @@ export function SettingsPanel({ settings, display, acrylicSupported, onBack, onS
 
   return (
     <Panel title="Settings" onBack={onBack}>
-      <div className="card">
-        <Switch
-          checked={settings.translucent && acrylicSupported}
-          onChange={(value) => onSet('translucent', value)}
-          label="Translucent window"
-          description={
-            acrylicSupported
-              ? 'Frosts the desktop behind the window instead of covering it.'
-              : 'Needs the Windows 11 acrylic backdrop, which this build of Windows does not provide.'
-          }
-        />
-      </div>
-
       <div className="card">
         <Switch
           checked={settings.persistMode}
@@ -105,12 +96,6 @@ export function SettingsPanel({ settings, display, acrylicSupported, onBack, onS
           label="Start minimised"
         />
         <Switch
-          checked={settings.minimizeToTray}
-          onChange={(value) => onSet('minimizeToTray', value)}
-          label="Close to tray"
-          description="Closing the window keeps the hotkey running. Quit from the tray menu to stop it."
-        />
-        <Switch
           checked={settings.checkUpdates}
           onChange={(value) => onSet('checkUpdates', value)}
           label="Check for updates on launch"
@@ -132,7 +117,11 @@ export function SettingsPanel({ settings, display, acrylicSupported, onBack, onS
           <div className="card" key={entry.id}>
             <div className="card-head" style={{ marginBottom: 0 }}>
               <span className="card-title">
-                <span className="tag purple">{entry.accelerator}</span>
+                <span className="hotkey-keys">
+                  {entry.accelerator.split('+').map((key, i) => (
+                    <span key={`${key}-${i}`} className="keycap">{key}</span>
+                  ))}
+                </span>
                 <span className="mono" style={{ fontSize: 11 }}><Res width={entry.width} height={entry.height} /></span>
               </span>
               <button className="btn icon" onClick={() => removeHotkey(entry.id)} aria-label="Delete hotkey">
@@ -145,14 +134,16 @@ export function SettingsPanel({ settings, display, acrylicSupported, onBack, onS
 
       <div className="card" style={{ marginTop: 8 }}>
         <div className="form-grid">
-          <Select value={accelerator} onChange={setAccelerator} compact aria-label="Hotkey">
-            {HOTKEY_CHOICES.map((choice) => (
-              <option key={choice} value={choice}>{choice}</option>
-            ))}
-          </Select>
+          <HotkeyInput
+            value={accelerator}
+            onChange={(next) => { setAccelerator(next); setError(null); }}
+            placeholder="Set key"
+            compact
+            aria-label="Hotkey for this resolution"
+          />
           <input
             className="input"
-            style={{ height: 30, fontSize: 11 }}
+            style={{ height: 32, fontSize: 11 }}
             value={res}
             spellCheck={false}
             placeholder="1920x1080"
@@ -174,6 +165,15 @@ export function SettingsPanel({ settings, display, acrylicSupported, onBack, onS
         </div>
         <button className="btn danger wide" onClick={onRestoreDefaults}>Restore Windows defaults</button>
       </div>
+
+      <div className="card">
+        <div className="switch-desc" style={{ marginBottom: 10 }}>
+          Removes Qres, its settings and the display helper it built. Your display stays on whatever mode it is on.
+        </div>
+        <button className="btn danger wide" onClick={() => setUninstalling(true)}>Uninstall Qres</button>
+      </div>
+
+      {uninstalling ? <UninstallDialog onClose={() => setUninstalling(false)} /> : null}
     </Panel>
   );
 }

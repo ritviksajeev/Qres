@@ -1,4 +1,4 @@
-import { HOTKEY_CHOICES } from '../lib/ipc';
+import { HotkeyInput } from './HotkeyInput';
 import { Select } from './Select';
 import { SectionHead } from './SectionHead';
 import type { DisplayInfo, Settings, ToggleMode } from '../lib/types';
@@ -48,19 +48,14 @@ export function HotkeyPanel({
       />
 
       <div className="row">
-        <Select
+        <HotkeyInput
           value={settings.hotkey.accelerator}
           onChange={onAccelerator}
           narrow
-          aria-label="Hotkey"
-          title="Global hotkey"
-        >
-          {HOTKEY_CHOICES.map((choice) => (
-            <option key={choice} value={choice}>{choice}</option>
-          ))}
-        </Select>
+          aria-label="Toggle hotkey"
+        />
         <button className={`btn wide${running ? '' : ' primary'}`} onClick={onToggleHotkey}>
-          {running ? 'Stop' : 'Start hotkey'}
+          {running ? 'Stop hotkey' : 'Start hotkey'}
         </button>
       </div>
 
@@ -97,13 +92,9 @@ export function HotkeyPanel({
       </div>
 
       <p className="hotkey-hint">
-        {running ? (
-          <>
-            <kbd>{settings.hotkey.accelerator}</kbd> flips between the two from anywhere, fullscreen games included.
-          </>
-        ) : (
-          <>Pick the pair you switch between, then start the hotkey.</>
-        )}
+        {running
+          ? 'Flips between the two from anywhere, fullscreen games included.'
+          : 'Click the key field, press any combination, then start it.'}
       </p>
     </section>
   );

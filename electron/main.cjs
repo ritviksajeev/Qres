@@ -3,14 +3,15 @@
 const { app, BrowserWindow, ipcMain, shell, nativeImage, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 
 const displays = require('./display.cjs');
 const settings = require('./store.cjs');
 const hotkeys = require('./hotkeys.cjs');
 const profiles = require('./profiles.cjs');
 const updates = require('./updates.cjs');
-const { createTray, destroyTray, refreshTray } = require('./tray.cjs');
+const uninstall = require('./uninstall.cjs');
+const trayMenu = require('./tray.cjs');
+const { createTray, destroyTray, refreshTray } = trayMenu;
 
 const IS_DEV = !app.isPackaged;
 const DEV_URL = process.env.VITE_DEV_SERVER_URL || 'http://localhost:5183';
@@ -21,40 +22,12 @@ let revert = null;          // { timer, deadline, previous, displayId }
 
 // ---------------------------------------------------------------- window
 
-// Acrylic is a Windows 11 backdrop. On 10 the flag is silently ignored, which
-// would leave a transparent backgroundColor showing nothing at all - so the
-// window only goes see-through where the compositor can actually blur.
-function acrylicSupported() {
-  if (process.platform !== 'win32') return false;
-  const build = Number(String(os.release()).split('.')[2] || 0);
-  return build >= 22000;
-}
-
-function translucentNow() {
-  return !!settings.get('translucent') && acrylicSupported();
-}
-
-function opaqueColor() {
+function backgroundColor() {
   return settings.get('theme') === 'light' ? '#f4f4f6' : '#050507';
-}
-
-// Applied on creation and again whenever the theme or the setting changes.
-function applyWindowMaterial() {
-  if (!win || win.isDestroyed()) return;
-  const on = translucentNow();
-  try {
-    win.setBackgroundColor(on ? '#00000000' : opaqueColor());
-    if (typeof win.setBackgroundMaterial === 'function') {
-      win.setBackgroundMaterial(on ? 'acrylic' : 'none');
-    }
-  } catch (_) {
-    // An unsupported build just stays opaque.
-  }
 }
 
 function createWindow() {
   const saved = settings.get('window') || {};
-  const translucent = translucentNow();
   const options = {
     width: saved.width || 400,
     height: saved.height || 704,
@@ -63,13 +36,12 @@ function createWindow() {
     maxWidth: 560,
     show: false,
     frame: false,
-    backgroundColor: translucent ? '#00000000' : opaqueColor(),
+    backgroundColor: backgroundColor(),
     resizable: true,
     maximizable: false,
     fullscreenable: false,
     autoHideMenuBar: true,
     icon: iconPath(),
-    ...(translucent ? { backgroundMaterial: 'acrylic' } : {}),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
@@ -97,9 +69,12 @@ function createWindow() {
     if (!hidden) win.show();
   });
 
+  // The window's X hides to the tray - Qres stays resident so the hotkey keeps
+  // working. Quitting is the tray menu's job.
   win.on('close', (event) => {
-    if (!quitting && settings.get('minimizeToTray')) {
+    if (!quitting) {
       event.preventDefault();
+      saveBounds();
       win.hide();
       return;
     }
@@ -355,11 +330,19 @@ function restartWatcher() {
 
 // ---------------------------------------------------------------- state
 
+function applyNames(list) {
+  const names = settings.get('monitorNames') || {};
+  return list.map((d) => {
+    const custom = names[d.monitorId] || names[d.id];
+    return custom ? { ...d, label: custom, renamed: true } : { ...d, renamed: false };
+  });
+}
+
 async function buildState() {
   let list = [];
   let error = null;
   try {
-    list = await displays.list();
+    list = applyNames(await displays.list());
   } catch (err) {
     error = err.message;
   }
@@ -381,7 +364,6 @@ async function buildState() {
     activeId: active ? active.id : null,
     toggle: active ? deriveToggle(active) : null,
     hotkeyActive: !!(state.hotkey && state.hotkey.enabled && hotkeys.isRegistered(state.hotkey.accelerator)),
-    effects: { translucent: translucentNow(), acrylicSupported: acrylicSupported() },
     version: app.getVersion(),
     platform: process.platform,
     error,
@@ -437,7 +419,11 @@ function registerIpc() {
   ipcMain.handle('qr:set', async (_e, { key, value }) => {
     settings.set(key, value);
 
-    if (key === 'theme' || key === 'translucent') applyWindowMaterial();
+    if (key === 'theme') {
+      if (win && !win.isDestroyed()) win.setBackgroundColor(backgroundColor());
+      refreshTray();
+    }
+    if (key === 'monitorNames') displays.invalidate();
     if (key === 'hotkey' || key === 'presetHotkeys') await rebindHotkeys();
     if (key === 'watcherEnabled' || key === 'gameProfiles') restartWatcher();
     if (key === 'startOnLogin') {
@@ -475,6 +461,29 @@ function registerIpc() {
     return { ok: true };
   });
 
+  ipcMain.handle('qr:tray-menu-get', () => trayMenu.currentModel());
+  ipcMain.handle('qr:tray-menu-size', (_e, { width, height }) => trayMenu.resizeMenu(width, height));
+  ipcMain.handle('qr:tray-menu-action', (_e, id) => trayMenu.handleAction(id));
+  ipcMain.handle('qr:tray-menu-close', () => trayMenu.hideMenu());
+
+  ipcMain.handle('qr:uninstall-plan', () => uninstall.plan());
+
+  ipcMain.handle('qr:uninstall-run', async () => {
+    const result = uninstall.run();
+    if (result.handedOff) {
+      // The NSIS uninstaller is running; get out of its way so it can delete
+      // the exe.
+      quitting = true;
+      setTimeout(() => app.quit(), 400);
+    }
+    return result;
+  });
+
+  ipcMain.handle('qr:quit', () => {
+    quitting = true;
+    app.quit();
+  });
+
   ipcMain.handle('qr:check-updates', async () => {
     try {
       return { ok: true, ...(await updates.check()) };
@@ -510,16 +519,33 @@ if (!app.requestSingleInstanceLock()) {
 
     createTray({
       icon: nativeImage.createFromPath(path.join(__dirname, '..', 'build', 'tray.png')),
+      devUrl: IS_DEV ? DEV_URL : null,
+      indexFile: path.join(__dirname, '..', 'dist', 'index.html'),
       onShow: showWindow,
       onToggle: () => toggleResolution('tray').catch((err) => toast(err.message, 'error')),
-      onApply: (mode) => applyMode({ ...mode, source: 'tray' }).catch((err) => toast(err.message, 'error')),
+      onApplyToggle: async (which) => {
+        try {
+          const display = await displays.currentFor(settings.get('targetDisplay'));
+          if (!display) return;
+          const mode = deriveToggle(display)[which];
+          await applyMode({ ...mode, display: display.id, source: 'tray' });
+        } catch (err) {
+          toast(err.message, 'error');
+        }
+      },
       onRestore: () => displays.restore().then(pushState).catch(() => {}),
       onQuit: () => { quitting = true; app.quit(); },
       getSummary: async () => {
         try {
           const display = await displays.currentFor(settings.get('targetDisplay'));
           if (!display) return null;
-          return { display, toggle: deriveToggle(display), hotkey: settings.get('hotkey') };
+          const [named] = applyNames([display]);
+          return {
+            display: named,
+            toggle: deriveToggle(named),
+            hotkey: settings.get('hotkey'),
+            theme: settings.get('theme'),
+          };
         } catch (_) {
           return null;
         }
@@ -565,6 +591,6 @@ if (!app.requestSingleInstanceLock()) {
 
   // The tray keeps Qres alive with no windows open - that is the point.
   app.on('window-all-closed', () => {
-    if (!settings.get('minimizeToTray')) app.quit();
+    // Deliberately empty: only the tray's Quit ends the process.
   });
 }

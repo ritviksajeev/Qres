@@ -120,16 +120,26 @@
 
 .brand {
   display: flex;
-  align-items: baseline;
-  gap: 8px;
+  align-items: center;
+  gap: 9px;
   min-width: 0;
 }
 
+/* The mark centres on the text block; the version sits on the wordmark's
+   baseline. Aligning all three in one row made the glyph float. */
 .brand-mark {
+  display: flex;
   color: var(--purple-bright);
   flex: none;
-  align-self: center;
   filter: drop-shadow(0 0 10px rgba(167, 139, 250, 0.35));
+}
+
+.brand-text {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  min-width: 0;
+  line-height: 1;
 }
 
 .brand-name {
@@ -146,6 +156,7 @@
   font-size: 8px;
   font-weight: 500;
   letter-spacing: 0.14em;
+  line-height: 1;
   color: var(--text-ghost);
 }
 
@@ -176,7 +187,6 @@
   padding: 8px 11px;
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
-  backdrop-filter: blur(6px);
   font-family: var(--font-mono);
   font-size: 8.5px;
   font-weight: 500;
@@ -1089,3 +1099,225 @@
 
 .mono { font-family: var(--font-mono); letter-spacing: 0.02em; }
 .dim { color: var(--text-faint); }
+
+/* ==========================================================================
+   Hotkey capture field
+   ========================================================================== */
+
+.hotkey-input-wrap { flex: 1; min-width: 0; }
+.hotkey-input-wrap.narrow { flex: 0 0 148px; }
+
+.hotkey-input {
+  width: 100%;
+  height: 34px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.4s var(--ease-out), background 0.4s var(--ease-out);
+}
+
+.hotkey-input:hover { border-color: var(--line-strong); background: var(--surface-hover); }
+
+.hotkey-input.listening {
+  border-color: rgba(167, 139, 250, 0.6);
+  background: rgba(139, 92, 246, 0.08);
+  animation: listening 1.6s var(--ease-smooth) infinite;
+}
+
+.hotkey-input.compact { height: 32px; }
+
+@keyframes listening {
+  0%, 100% { border-color: rgba(167, 139, 250, 0.6); }
+  50%      { border-color: rgba(167, 139, 250, 0.22); }
+}
+
+.hotkey-prompt {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--purple-bright);
+}
+
+.hotkey-prompt.dim { color: var(--text-ghost); }
+
+.hotkey-keys { display: flex; align-items: center; gap: 4px; }
+
+/* Each modifier and key as its own cap, so a long chord still reads. */
+.keycap {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  background: var(--surface-hover);
+  border: 1px solid var(--line-strong);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  padding: 3px 6px 2px;
+  line-height: 1;
+}
+
+.hotkey-problem {
+  margin-top: 6px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--warn);
+}
+
+/* ==========================================================================
+   Monitor rename
+   ========================================================================== */
+
+.rename-target {
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  border-bottom: 1px dashed transparent;
+  transition: border-color 0.3s var(--ease-out), color 0.3s var(--ease-out);
+}
+
+.rename-target:hover {
+  color: var(--purple-bright);
+  border-bottom-color: rgba(167, 139, 250, 0.5);
+}
+
+.input.rename {
+  height: 30px;
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+
+/* ==========================================================================
+   Uninstall dialog list
+   ========================================================================== */
+
+.dialog-list {
+  margin-bottom: 14px;
+  padding: 10px 11px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 9.5px;
+  line-height: 1.7;
+  color: var(--text-faint);
+  word-break: break-all;
+}
+
+.dialog-copy.dim { color: var(--text-faint); }
+
+/* ==========================================================================
+   Tray menu - its own window, same tokens
+   ========================================================================== */
+
+.traymenu-root {
+  height: 100%;
+  padding: 8px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.traymenu {
+  width: 100%;
+  padding: 6px;
+  background: var(--bg-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
+}
+
+:root[data-theme='light'] .traymenu {
+  background: #ffffff;
+  box-shadow: 0 16px 44px rgba(13, 13, 17, 0.18);
+}
+
+.traymenu-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 9px 10px;
+}
+
+.traymenu-mark { display: flex; color: var(--purple-bright); flex: none; }
+
+.traymenu-head-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+.traymenu-head-name {
+  font-family: var(--font-display);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.traymenu-head-mode {
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.traymenu-sep {
+  height: 1px;
+  margin: 5px 9px;
+  background: var(--line);
+}
+
+.traymenu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 9px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  transition: background 0.18s var(--ease-out), color 0.18s var(--ease-out);
+}
+
+.traymenu-item:hover { background: var(--surface-hover); }
+.traymenu-item.accent .traymenu-label { color: var(--purple-bright); }
+.traymenu-item.danger:hover { background: #e11d48; }
+.traymenu-item.danger:hover .traymenu-label { color: #fff; }
+
+.traymenu-label {
+  flex: 1;
+  min-width: 0;
+  font-size: 11.5px;
+  letter-spacing: -0.005em;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.traymenu-value,
+.traymenu-hint {
+  flex: none;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.1em;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+
+.traymenu-hint {
+  color: var(--purple-bright);
+  border: 1px solid rgba(167, 139, 250, 0.3);
+  border-radius: 2px;
+  padding: 2px 5px;
+  line-height: 1;
+}

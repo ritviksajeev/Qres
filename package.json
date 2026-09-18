@@ -1,6 +1,6 @@
 {
   "name": "qres",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "Change your monitor resolution and refresh rate from a hotkey.",
   "author": "EvZero <hi@evzero.org>",
   "license": "MIT",

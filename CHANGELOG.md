@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.3
+
+- Hotkeys are captured, not picked from a list: click the field and press the combination you want
+- Monitors can be renamed, keyed on hardware id so the name survives a replug
+- The window's X now hides to the tray and minimise behaves normally; quitting moved to the tray
+- The tray menu is drawn by the app, so it carries the theme instead of being a grey Windows menu
+- Uninstall from Settings → Danger zone, including the settings file and the cached display helper
+- Removed the translucent window
+- Title-bar lockup: the mark is centred on the wordmark and the version sits on its baseline
+
 ## 1.0.0
 
 First release.

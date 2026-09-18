@@ -21,8 +21,8 @@
   --line:        rgba(255, 255, 255, 0.06);
   --line-strong: rgba(255, 255, 255, 0.12);
 
-  /* Frosted layers. Every panel, tile and field is one of these over the
-     scrim, so the whole surface stays see-through when acrylic is on. */
+  /* Layers. Every panel, tile and field is one of these over the scrim, so
+     depth comes from stacked translucency rather than a stack of flat greys. */
   --scrim:         #050507;
   --surface:       rgba(255, 255, 255, 0.032);
   --surface-hover: rgba(255, 255, 255, 0.058);
@@ -51,10 +51,6 @@
   --titlebar-h: 34px;
 }
 
-/* With the acrylic backdrop the window tints the desktop instead of covering
-   it; without it the scrim stays opaque. */
-:root[data-translucent='on'] { --scrim: rgba(5, 5, 7, 0.62); }
-
 /* The light theme keeps the same purple and the same restraint - it just turns
    the paper over. */
 :root[data-theme='light'] {
@@ -71,18 +67,18 @@
   --line:        rgba(13, 13, 17, 0.08);
   --line-strong: rgba(13, 13, 17, 0.16);
 
-  /* The dark theme's lilac is unreadable on a pale translucent surface, so the
-     light theme carries the accent a few steps deeper. */
+  /* The dark theme's lilac cannot be read on a pale surface, so the light
+     theme carries the accent a few steps deeper. */
   --purple:        #7c3aed;
   --purple-bright: #6d28d9;
   --purple-deep:   #4c1d95;
   --purple-glow:   rgba(124, 58, 237, 0.13);
 
   --scrim:         #f5f5f7;
-  --surface:       rgba(255, 255, 255, 0.55);
-  --surface-hover: rgba(255, 255, 255, 0.85);
-  --bar:           rgba(255, 255, 255, 0.4);
-  --bar-sheen:     rgba(255, 255, 255, 0.5);
+  --surface:       rgba(255, 255, 255, 0.72);
+  --surface-hover: #ffffff;
+  --bar:           rgba(255, 255, 255, 0.6);
+  --bar-sheen:     rgba(255, 255, 255, 0.75);
 
   --glass-bg:    rgba(13, 13, 17, 0.022);
   --glass-hover: rgba(13, 13, 17, 0.05);
@@ -95,7 +91,6 @@
   --error: #dc2626;
 }
 
-:root[data-theme='light'][data-translucent='on'] { --scrim: rgba(248, 248, 250, 0.7); }
 
 * {
   box-sizing: border-box;
@@ -109,7 +104,8 @@ body,
   height: 100%;
 }
 
-/* The scrim lives on .app so the acrylic backdrop reaches the window edge. */
+/* The scrim lives on .app; body stays clear so the tray-menu window, which
+   shares this bundle, can draw its own rounded card. */
 body {
   background: transparent;
   color: var(--text);

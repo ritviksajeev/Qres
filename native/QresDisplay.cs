@@ -198,6 +198,7 @@ namespace Qres
         public string Id;           // \\.\DISPLAY1
         public string Adapter;      // "NVIDIA GeForce RTX 4070"
         public string Monitor;      // "LG ULTRAGEAR"
+        public string MonitorId;    // MONITOR\GSM5B09\{4d36e96e-...}\0002
         public bool Primary;
         public int X, Y, Width, Height, Refresh, Bpp;
         public int Orientation;
@@ -266,6 +267,7 @@ namespace Qres
                     Adapter = (adapter.DeviceString ?? "").Trim(),
                     Primary = (adapter.StateFlags & Native.DISPLAY_DEVICE_PRIMARY_DEVICE) != 0,
                     Monitor = MonitorName(adapter.DeviceName),
+                    MonitorId = MonitorHardwareId(adapter.DeviceName),
                 };
 
                 var current = NewDevmode();
@@ -297,6 +299,18 @@ namespace Qres
                 if (name.Length > 0) return name;
             }
             return "Display";
+        }
+
+        private static string MonitorHardwareId(string adapterDeviceName)
+        {
+            var mon = new Native.DISPLAY_DEVICE();
+            mon.cb = Marshal.SizeOf(typeof(Native.DISPLAY_DEVICE));
+            if (Native.EnumDisplayDevices(adapterDeviceName, 0, ref mon, 0))
+            {
+                string id = (mon.DeviceID ?? "").Trim();
+                if (id.Length > 0) return id;
+            }
+            return adapterDeviceName ?? "";
         }
 
         private static Native.DEVMODE NewDevmode()
@@ -365,6 +379,7 @@ namespace Qres
                  .Prop("id", d.Id)
                  .Prop("adapter", d.Adapter)
                  .Prop("monitor", d.Monitor)
+                 .Prop("monitorId", d.MonitorId)
                  .Prop("primary", d.Primary)
                  .Prop("x", d.X).Prop("y", d.Y)
                  .Prop("width", d.Width).Prop("height", d.Height)

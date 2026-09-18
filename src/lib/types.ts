@@ -15,7 +15,10 @@ export interface DisplayInfo {
   id: string;
   adapter: string;
   monitor: string;
+  /** Stable hardware identity - custom names are keyed on this, not the slot. */
+  monitorId: string;
   label: string;
+  renamed: boolean;
   shortId: string;
   primary: boolean;
   x: number;
@@ -68,7 +71,6 @@ export interface GameProfile {
 
 export interface Settings {
   theme: 'dark' | 'light';
-  translucent: boolean;
   targetDisplay: string;
   refresh: RefreshChoice;
   persistMode: boolean;
@@ -82,8 +84,8 @@ export interface Settings {
   watcherEnabled: boolean;
   startOnLogin: boolean;
   startMinimized: boolean;
-  minimizeToTray: boolean;
   checkUpdates: boolean;
+  monitorNames: Record<string, string>;
   lastSeenVersion: string | null;
   window: { width: number; height: number; x: number | null; y: number | null };
 }
@@ -94,7 +96,6 @@ export interface AppState {
   activeId: string | null;
   toggle: { native: ToggleMode; stretched: ToggleMode } | null;
   hotkeyActive: boolean;
-  effects: { translucent: boolean; acrylicSupported: boolean };
   version: string;
   platform: string;
   error: string | null;
@@ -143,6 +144,36 @@ export interface RevertPrompt {
   deadline: number;
 }
 
+export interface UninstallPlan {
+  kind: 'installed' | 'portable';
+  folder: string | null;
+  paths: string[];
+}
+
+export interface UninstallResult {
+  kind: 'installed' | 'portable';
+  handedOff: boolean;
+  failed: string[];
+  folder?: string | null;
+  error?: string;
+}
+
+export interface TrayMenuItem {
+  type: 'header' | 'separator' | 'item';
+  id?: string;
+  label?: string;
+  value?: string;
+  hint?: string | null;
+  accent?: boolean;
+  danger?: boolean;
+}
+
+export interface TrayMenuModel {
+  items: TrayMenuItem[];
+  theme: 'dark' | 'light';
+  version: string;
+}
+
 export interface QresBridge {
   getState(): Promise<AppState>;
   refreshDisplays(): Promise<AppState>;
@@ -155,6 +186,16 @@ export interface QresBridge {
   checkUpdates(): Promise<UpdateResult>;
   openExternal(url: string): Promise<void>;
   window(action: 'minimize' | 'hide' | 'close'): Promise<void>;
+
+  uninstallPlan(): Promise<UninstallPlan>;
+  uninstallRun(): Promise<UninstallResult>;
+  quit(): Promise<void>;
+
+  trayMenuGet(): Promise<TrayMenuModel | null>;
+  trayMenuSize(width: number, height: number): Promise<void>;
+  trayMenuAction(id: string): Promise<void>;
+  trayMenuClose(): Promise<void>;
+  onTrayMenuModel(handler: (model: TrayMenuModel) => void): () => void;
   onState(handler: (state: AppState) => void): () => void;
   onApplied(handler: (result: ApplyResult) => void): () => void;
   onToast(handler: (toast: Toast) => void): () => void;
