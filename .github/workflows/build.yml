@@ -3,8 +3,12 @@ name: build
 on:
   push:
     branches: [main]
+    tags: ['v*']
   pull_request:
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   windows:
@@ -43,3 +47,17 @@ jobs:
             release/*.exe
             release/*.zip
           if-no-files-found: error
+
+      # Pushing a v* tag turns that same build into a published release, so the
+      # download links on evzero.org point at something permanent.
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: QuickRes ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          files: |
+            release/*.exe
+            release/*.zip
