@@ -1,10 +1,17 @@
 import { qr } from '../lib/ipc';
-import { Close, Minimize, Restore } from './Icons';
+import { Close, Mark, Minimize, Restore } from './Icons';
 
-export function TitleBar({ minimizeToTray }: { minimizeToTray: boolean }) {
+// Brand and window controls share one bar. A separate header row for the
+// wordmark wastes 40px of a 400px-wide window and says the name twice.
+export function TitleBar({ version, minimizeToTray }: { version: string; minimizeToTray: boolean }) {
   return (
     <div className="titlebar">
-      <span className="titlebar-name">QuickRes</span>
+      <div className="brand">
+        <span className="brand-mark"><Mark size={15} /></span>
+        <span className="brand-name">QuickRes</span>
+        <span className="brand-version">{version}</span>
+      </div>
+
       <div className="titlebar-tools">
         <button className="titlebar-btn" onClick={() => qr.window('minimize')} aria-label="Minimise" title="Minimise">
           <Minimize />

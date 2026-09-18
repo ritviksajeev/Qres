@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Panel } from './Panel';
 import { Select, Switch } from './Select';
 import { Trash } from './Icons';
+import { Res, SectionHead } from './SectionHead';
 import { HOTKEY_CHOICES, uid } from '../lib/ipc';
 import { parseResolution } from '../lib/presets';
 import type { DisplayInfo, PresetHotkey, Settings } from '../lib/types';
@@ -73,8 +74,8 @@ export function SettingsPanel({ settings, display, onBack, onSet, onRestoreDefau
         ) : null}
       </div>
 
-      <div className="section-head" style={{ marginTop: 16 }}>
-        <span className="section-label">Startup</span>
+      <div style={{ marginTop: 18 }}>
+        <SectionHead num="01" label="Startup" />
       </div>
 
       <div className="card">
@@ -102,9 +103,12 @@ export function SettingsPanel({ settings, display, onBack, onSet, onRestoreDefau
         />
       </div>
 
-      <div className="section-head" style={{ marginTop: 16 }}>
-        <span className="section-label">Extra hotkeys</span>
-        <span className="section-note">{settings.presetHotkeys.length}</span>
+      <div style={{ marginTop: 18 }}>
+        <SectionHead
+          num="02"
+          label="Extra hotkeys"
+          note={<span className="section-note">{String(settings.presetHotkeys.length).padStart(2, '0')}</span>}
+        />
       </div>
 
       {settings.presetHotkeys.length === 0 ? (
@@ -115,7 +119,7 @@ export function SettingsPanel({ settings, display, onBack, onSet, onRestoreDefau
             <div className="card-head" style={{ marginBottom: 0 }}>
               <span className="card-title">
                 <span className="tag purple">{entry.accelerator}</span>
-                <span className="mono" style={{ fontSize: 11 }}>{entry.width} × {entry.height}</span>
+                <span className="mono" style={{ fontSize: 11 }}><Res width={entry.width} height={entry.height} /></span>
               </span>
               <button className="btn icon" onClick={() => removeHotkey(entry.id)} aria-label="Delete hotkey">
                 <Trash />
@@ -146,8 +150,8 @@ export function SettingsPanel({ settings, display, onBack, onSet, onRestoreDefau
         {error ? <div className="switch-desc" style={{ color: 'var(--error)', marginTop: 8 }}>{error}</div> : null}
       </div>
 
-      <div className="section-head" style={{ marginTop: 16 }}>
-        <span className="section-label">Danger zone</span>
+      <div style={{ marginTop: 18 }}>
+        <SectionHead num="03" label="Danger zone" />
       </div>
 
       <div className="card">

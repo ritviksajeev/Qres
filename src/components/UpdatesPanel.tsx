@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Panel } from './Panel';
 import { qr } from '../lib/ipc';
+import { KV } from './SectionHead';
 import type { UpdateResult } from '../lib/types';
 
 interface UpdatesPanelProps {
@@ -32,10 +33,8 @@ export function UpdatesPanel({ version, result, onBack, onResult }: UpdatesPanel
     <Panel title="Updates" onBack={onBack}>
       <div className="card">
         <dl className="kv">
-          <dt>Installed</dt>
-          <dd className="mono">v{version}</dd>
-          <dt>Latest</dt>
-          <dd className="mono">{result?.ok ? `v${result.latest}` : busy ? 'checking…' : '—'}</dd>
+          <KV label="Installed">v{version}</KV>
+          <KV label="Latest">{result?.ok ? `v${result.latest}` : busy ? 'checking…' : '—'}</KV>
         </dl>
 
         <div className="row" style={{ marginTop: 12 }}>
@@ -67,7 +66,7 @@ export function UpdatesPanel({ version, result, onBack, onResult }: UpdatesPanel
 
       {result?.ok && result.available && result.notes ? (
         <div className="card" style={{ marginTop: 8 }}>
-          <div className="card-head"><span className="card-title">What's new</span></div>
+          <div className="card-head"><span className="card-title">What&rsquo;s new</span></div>
           <div className="switch-desc" style={{ whiteSpace: 'pre-wrap' }}>{result.notes.slice(0, 1200)}</div>
         </div>
       ) : null}

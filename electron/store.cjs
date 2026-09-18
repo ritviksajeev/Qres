@@ -29,7 +29,7 @@ const defaults = {
   minimizeToTray: true,
   checkUpdates: true,
   lastSeenVersion: null,
-  window: { width: 400, height: 668, x: null, y: null },
+  window: { width: 400, height: 704, x: null, y: null },
 };
 
 const store = new Store({ name: 'quickres', defaults });

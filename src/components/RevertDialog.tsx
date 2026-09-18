@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Res } from './SectionHead';
 import type { RevertPrompt } from '../lib/types';
 
 interface RevertDialogProps {
@@ -32,13 +33,14 @@ export function RevertDialog({ prompt, onKeep, onRevert }: RevertDialogProps) {
   return (
     <div className="overlay">
       <div className="dialog">
-        <div className="dialog-title">Keep this resolution?</div>
+        <span className="eyebrow">Confirm</span>
+        <div className="dialog-title">Keep this<br />resolution?</div>
         <p className="dialog-copy">
           If you can read this, it worked. Doing nothing puts you back on{' '}
-          <span className="mono">{prompt.previous.width} × {prompt.previous.height}</span>.
+          <span className="mono"><Res width={prompt.previous.width} height={prompt.previous.height} /></span>.
         </p>
 
-        <div className="countdown">{left}s</div>
+        <div className="countdown">{String(left).padStart(2, '0')}s</div>
         <div className="countdown-track"><div className="countdown-fill" style={{ width: `${pct}%` }} /></div>
 
         <div className="dialog-actions">

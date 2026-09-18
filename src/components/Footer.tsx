@@ -26,7 +26,7 @@ export function Footer({ panel, onPanel, updateAvailable }: FooterProps) {
             onClick={() => onPanel(link.id)}
           >
             {link.label}
-            {link.id === 'updates' && updateAvailable ? <span className="preset-dot" style={{ display: 'inline-block', marginLeft: 4, verticalAlign: 'middle' }} /> : null}
+            {link.id === 'updates' && updateAvailable ? <span className="badge" /> : null}
           </button>
         ))}
       </div>

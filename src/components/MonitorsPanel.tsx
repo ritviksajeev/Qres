@@ -1,4 +1,5 @@
 import { Panel } from './Panel';
+import { KV, Res } from './SectionHead';
 import { Refresh } from './Icons';
 import { ratioOf } from '../lib/presets';
 import type { DisplayInfo } from '../lib/types';
@@ -15,7 +16,7 @@ export function MonitorsPanel({ displays, activeId, onBack, onRefresh }: Monitor
     <Panel
       title="Monitors"
       onBack={onBack}
-      action={<button className="btn icon" onClick={onRefresh} aria-label="Re-read displays" title="Re-read displays"><Refresh /></button>}
+      action={<button className="head-btn" onClick={onRefresh} aria-label="Re-read displays" title="Re-read displays"><Refresh /></button>}
     >
       {displays.length === 0 ? (
         <div className="empty">No displays reported yet.</div>
@@ -32,23 +33,20 @@ export function MonitorsPanel({ displays, activeId, onBack, onRefresh }: Monitor
             </div>
 
             <dl className="kv">
-              <dt>Current</dt>
-              <dd>{display.width} × {display.height} @ {display.refresh} Hz · {display.bpp}-bit · {ratioOf(display.width, display.height)}</dd>
-
-              <dt>Native</dt>
-              <dd>{display.native.width} × {display.native.height} @ {display.native.refresh} Hz</dd>
-
-              <dt>Rates</dt>
-              <dd>{display.refreshRates.length ? `${display.refreshRates.join(', ')} Hz` : '—'}</dd>
-
-              <dt>Modes</dt>
-              <dd>{display.resolutions.length} resolutions · {display.modes.length} total</dd>
-
-              <dt>Position</dt>
-              <dd>{display.x}, {display.y}</dd>
-
-              <dt>Adapter</dt>
-              <dd>{display.adapter || '—'}</dd>
+              <KV label="Current">
+                <Res width={display.width} height={display.height} /> · {display.refresh}Hz · {display.bpp}-bit · {ratioOf(display.width, display.height)}
+              </KV>
+              <KV label="Native">
+                <Res width={display.native.width} height={display.native.height} /> · {display.native.refresh}Hz
+              </KV>
+              <KV label="Rates">
+                {display.refreshRates.length ? `${display.refreshRates.join(' / ')} Hz` : '—'}
+              </KV>
+              <KV label="Modes">
+                {display.resolutions.length} resolutions · {display.modes.length} total
+              </KV>
+              <KV label="Position">{display.x}, {display.y}</KV>
+              <KV label="Adapter">{display.adapter || '—'}</KV>
             </dl>
           </div>
         ))

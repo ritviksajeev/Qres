@@ -125,10 +125,11 @@ export default function App() {
 
   return (
     <div className="app">
-      <TitleBar minimizeToTray={settings.minimizeToTray} />
+      <div className="app-grain" aria-hidden="true" />
+
+      <TitleBar version={state.version} minimizeToTray={settings.minimizeToTray} />
 
       <Header
-        version={state.version}
         settings={settings}
         displays={state.displays}
         activeId={state.activeId}

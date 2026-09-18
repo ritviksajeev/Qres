@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Panel } from './Panel';
 import { Select, Switch } from './Select';
 import { Trash } from './Icons';
+import { KV, Res, SectionHead } from './SectionHead';
 import { parseResolution } from '../lib/presets';
 import { uid } from '../lib/ipc';
 import type { DisplayInfo, GameProfile, Settings } from '../lib/types';
@@ -73,9 +74,12 @@ export function ProfilesPanel({ settings, display, onBack, onChange, onWatcher }
         />
       </div>
 
-      <div className="section-head" style={{ marginTop: 16 }}>
-        <span className="section-label">Profiles</span>
-        <span className="section-note">{profiles.length}</span>
+      <div style={{ marginTop: 18 }}>
+        <SectionHead
+          num="01"
+          label="Profiles"
+          note={<span className="section-note">{String(profiles.length).padStart(2, '0')}</span>}
+        />
       </div>
 
       {profiles.length === 0 ? (
@@ -102,15 +106,12 @@ export function ProfilesPanel({ settings, display, onBack, onChange, onWatcher }
             </div>
 
             <dl className="kv">
-              <dt>Process</dt>
-              <dd className="mono">{profile.process}</dd>
-              <dt>On launch</dt>
-              <dd>{profile.width} × {profile.height}</dd>
-              <dt>On exit</dt>
-              <dd>{profile.revertOnExit ? 'Back to native' : 'Leave it'}</dd>
+              <KV label="Process">{profile.process}</KV>
+              <KV label="On launch"><Res width={profile.width} height={profile.height} /></KV>
+              <KV label="On exit">{profile.revertOnExit ? 'Back to native' : 'Leave it'}</KV>
             </dl>
 
-            <div style={{ marginTop: 8 }}>
+            <div style={{ marginTop: 10 }}>
               <Switch
                 checked={profile.revertOnExit}
                 onChange={(value) => patch(profile.id, { revertOnExit: value })}
@@ -121,8 +122,8 @@ export function ProfilesPanel({ settings, display, onBack, onChange, onWatcher }
         ))
       )}
 
-      <div className="section-head" style={{ marginTop: 16 }}>
-        <span className="section-label">Add a profile</span>
+      <div style={{ marginTop: 18 }}>
+        <SectionHead num="02" label="Add a profile" />
       </div>
 
       <div className="card">

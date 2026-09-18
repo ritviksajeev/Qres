@@ -1,5 +1,6 @@
 import { HOTKEY_CHOICES } from '../lib/ipc';
 import { Select } from './Select';
+import { SectionHead } from './SectionHead';
 import type { DisplayInfo, Settings, ToggleMode } from '../lib/types';
 
 interface HotkeyPanelProps {
@@ -35,13 +36,16 @@ export function HotkeyPanel({
 
   return (
     <section className="section">
-      <div className="section-head">
-        <span className="section-label">Hotkey toggle</span>
-        <span className={`status-pill${running ? ' on' : ''}`}>
-          <span className="dot" />
-          {running ? 'Running' : 'Stopped'}
-        </span>
-      </div>
+      <SectionHead
+        num="03"
+        label="Hotkey"
+        note={
+          <span className={`status-pill${running ? ' on' : ''}`}>
+            <span className="dot" />
+            {running ? 'Live' : 'Stopped'}
+          </span>
+        }
+      />
 
       <div className="row">
         <Select
@@ -56,11 +60,11 @@ export function HotkeyPanel({
           ))}
         </Select>
         <button className={`btn wide${running ? '' : ' primary'}`} onClick={onToggleHotkey}>
-          {running ? 'Stop hotkey' : 'Start hotkey'}
+          {running ? 'Stop' : 'Start hotkey'}
         </button>
       </div>
 
-      <div className="field-row" style={{ marginTop: 9 }}>
+      <div className="field-row" style={{ marginTop: 10 }}>
         <span className="field-label">Native</span>
         <Select
           value={modeValue(toggle?.native ?? null)}
@@ -95,8 +99,7 @@ export function HotkeyPanel({
       <p className="hotkey-hint">
         {running ? (
           <>
-            <code>{settings.hotkey.accelerator}</code> flips between the two, from anywhere - including inside a
-            fullscreen game.
+            <kbd>{settings.hotkey.accelerator}</kbd> flips between the two from anywhere, fullscreen games included.
           </>
         ) : (
           <>Pick the pair you switch between, then start the hotkey.</>

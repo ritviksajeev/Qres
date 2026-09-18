@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { parseResolution } from '../lib/presets';
 import { Select } from './Select';
+import { SectionHead } from './SectionHead';
 import type { DisplayInfo, RefreshChoice } from '../lib/types';
 
 interface CustomResolutionProps {
@@ -27,10 +28,11 @@ export function CustomResolution({ display, refresh, busy, onRefreshChange, onAp
 
   return (
     <section className="section">
-      <div className="section-head">
-        <span className="section-label">Custom resolution</span>
-        {invalid ? <span className="section-note" style={{ color: 'var(--error)' }}>Use 1920x1080</span> : null}
-      </div>
+      <SectionHead
+        num="02"
+        label="Custom"
+        note={invalid ? <span className="section-note" style={{ color: 'var(--error)' }}>1920x1080</span> : undefined}
+      />
 
       <div className="row">
         <input
@@ -43,10 +45,12 @@ export function CustomResolution({ display, refresh, busy, onRefreshChange, onAp
           spellCheck={false}
           aria-label="Custom resolution"
         />
-        <button className="btn" onClick={submit} disabled={busy || !parsed}>Apply</button>
+        <button className="btn" onClick={submit} disabled={busy || !parsed}>
+          Apply <span className="arrow">&rarr;</span>
+        </button>
       </div>
 
-      <div className="field-row" style={{ marginTop: 7 }}>
+      <div className="field-row" style={{ marginTop: 8 }}>
         <span className="field-label">Refresh</span>
         <Select
           value={String(refresh)}
@@ -54,7 +58,7 @@ export function CustomResolution({ display, refresh, busy, onRefreshChange, onAp
           aria-label="Refresh rate"
           title="Applies to every resolution change"
         >
-          <option value="max">Highest available (default)</option>
+          <option value="max">Highest available</option>
           {rates.map((rate) => (
             <option key={rate} value={rate}>{rate} Hz</option>
           ))}

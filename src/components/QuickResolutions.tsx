@@ -1,5 +1,6 @@
 import { KIND_LABEL, type Preset } from '../lib/presets';
 import type { DisplayInfo } from '../lib/types';
+import { SectionHead, Res } from './SectionHead';
 import { Refresh } from './Icons';
 
 interface QuickResolutionsProps {
@@ -13,16 +14,19 @@ interface QuickResolutionsProps {
 export function QuickResolutions({ presets, display, busy, onApply, onRefresh }: QuickResolutionsProps) {
   return (
     <section className="section">
-      <div className="section-head">
-        <span className="section-label">Quick resolutions</span>
-        <button className="footer-link" onClick={onRefresh} title="Re-read displays" aria-label="Re-read displays">
-          <Refresh />
-        </button>
-      </div>
+      <SectionHead
+        num="01"
+        label="Resolutions"
+        note={
+          <button className="head-btn" onClick={onRefresh} title="Re-read displays" aria-label="Re-read displays">
+            <Refresh />
+          </button>
+        }
+      />
 
       <div className="preset-grid">
         {presets.length === 0 ? (
-          <div className="preset-empty">No display modes yet.</div>
+          <div className="preset-empty">No display modes yet</div>
         ) : (
           presets.map((preset) => {
             const active = !!display && display.width === preset.width && display.height === preset.height;
@@ -38,12 +42,12 @@ export function QuickResolutions({ presets, display, busy, onApply, onRefresh }:
                     : `${preset.width} × ${preset.height} is not advertised by this display - it needs a custom resolution in your GPU control panel. See the FAQ.`
                 }
               >
-                <div className="preset-res">
-                  {preset.width}x{preset.height}
-                  {preset.supported ? null : <span className="preset-dot" />}
-                </div>
+                {preset.supported ? null : <span className="preset-flag" />}
+                <div className="preset-res"><Res width={preset.width} height={preset.height} /></div>
                 <div className="preset-meta">
-                  {KIND_LABEL[preset.kind]} · {preset.ratio}
+                  {KIND_LABEL[preset.kind]}
+                  <span className="sep" />
+                  {preset.ratio}
                 </div>
               </button>
             );

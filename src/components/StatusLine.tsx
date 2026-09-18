@@ -1,4 +1,5 @@
 import type { DisplayInfo, Settings } from '../lib/types';
+import { Res } from './SectionHead';
 
 interface StatusLineProps {
   display: DisplayInfo | null;
@@ -10,17 +11,15 @@ interface StatusLineProps {
 export function StatusLine({ display, settings }: StatusLineProps) {
   if (!display) return null;
 
-  const auto = settings.targetDisplay === 'auto';
-
   return (
     <div className="statusline">
       <span className="statusline-name" title={display.adapter}>
         <span className="statusline-dot" />
         {display.label}
-        {auto ? <span className="dim"> · auto</span> : null}
+        {settings.targetDisplay === 'auto' ? <span className="dim">&nbsp;· auto</span> : null}
       </span>
-      <span className="mono statusline-mode">
-        {display.width} × {display.height} @ {display.refresh} Hz
+      <span className="statusline-mode">
+        <Res width={display.width} height={display.height} /> · {display.refresh}Hz
       </span>
     </div>
   );

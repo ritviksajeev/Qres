@@ -24,7 +24,7 @@ function createWindow() {
   const saved = settings.get('window') || {};
   const options = {
     width: saved.width || 400,
-    height: saved.height || 668,
+    height: saved.height || 704,
     minWidth: 360,
     minHeight: 560,
     maxWidth: 560,
