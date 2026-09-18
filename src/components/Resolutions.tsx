@@ -3,7 +3,7 @@ import type { DisplayInfo } from '../lib/types';
 import { SectionHead, Res } from './SectionHead';
 import { Refresh } from './Icons';
 
-interface QuickResolutionsProps {
+interface ResolutionsProps {
   presets: Preset[];
   display: DisplayInfo | null;
   busy: boolean;
@@ -11,7 +11,7 @@ interface QuickResolutionsProps {
   onRefresh: () => void;
 }
 
-export function QuickResolutions({ presets, display, busy, onApply, onRefresh }: QuickResolutionsProps) {
+export function Resolutions({ presets, display, busy, onApply, onRefresh }: ResolutionsProps) {
   return (
     <section className="section">
       <SectionHead

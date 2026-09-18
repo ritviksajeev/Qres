@@ -1,8 +1,8 @@
-// QuickResDisplay - tiny Win32 display-mode CLI used by QuickRes.
+// QresDisplay - tiny Win32 display-mode CLI used by Qres.
 //
-// QuickRes compiles this file on first run with the csc.exe that ships inside
+// Qres compiles this file on first run with the csc.exe that ships inside
 // Windows (%WINDIR%\Microsoft.NET\Framework64\v4.0.30319) and caches the result
-// in %LOCALAPPDATA%\QuickRes\bin. No SDK, no native node module, no prebuilt
+// in %LOCALAPPDATA%\Qres\bin. No SDK, no native node module, no prebuilt
 // binary in the repo - and every display call after that is a ~20 ms exec.
 //
 // Every command prints a single line of JSON on stdout.
@@ -28,7 +28,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace QuickRes
+namespace Qres
 {
     internal static class Native
     {

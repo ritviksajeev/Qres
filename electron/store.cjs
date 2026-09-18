@@ -4,9 +4,10 @@ const Store = require('electron-store');
 
 // A stretched profile is only meaningful next to the native one, so the toggle
 // pair is stored together and both sides are filled in from the real panel the
-// first time QuickRes sees it.
+// first time Qres sees it.
 const defaults = {
   theme: 'dark',
+  translucent: true,              // acrylic backdrop on Windows 11; ignored elsewhere
   targetDisplay: 'auto',          // 'auto' (monitor under the cursor) | 'primary' | device id
   refresh: 'max',                 // 'max' keeps the highest rate the panel offers
   persistMode: true,              // write the mode to the registry so it survives a reboot
@@ -32,7 +33,7 @@ const defaults = {
   window: { width: 400, height: 704, x: null, y: null },
 };
 
-const store = new Store({ name: 'quickres', defaults });
+const store = new Store({ name: 'qres', defaults });
 
 function all() {
   const out = {};

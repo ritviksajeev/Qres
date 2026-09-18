@@ -68,6 +68,7 @@ export interface GameProfile {
 
 export interface Settings {
   theme: 'dark' | 'light';
+  translucent: boolean;
   targetDisplay: string;
   refresh: RefreshChoice;
   persistMode: boolean;
@@ -93,6 +94,7 @@ export interface AppState {
   activeId: string | null;
   toggle: { native: ToggleMode; stretched: ToggleMode } | null;
   hotkeyActive: boolean;
+  effects: { translucent: boolean; acrylicSupported: boolean };
   version: string;
   platform: string;
   error: string | null;
@@ -141,7 +143,7 @@ export interface RevertPrompt {
   deadline: number;
 }
 
-export interface QuickResBridge {
+export interface QresBridge {
   getState(): Promise<AppState>;
   refreshDisplays(): Promise<AppState>;
   apply(request: ApplyRequest): Promise<ApplyResult>;
@@ -164,6 +166,6 @@ export interface QuickResBridge {
 
 declare global {
   interface Window {
-    quickres: QuickResBridge;
+    qres: QresBridge;
   }
 }

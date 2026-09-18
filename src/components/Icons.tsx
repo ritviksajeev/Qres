@@ -1,13 +1,15 @@
-interface IconProps {
-  size?: number;
-}
-
-export function Mark({ size = 18 }: IconProps) {
+/**
+ * The viewBox is cropped to the glyph's own stroke bounds rather than a square
+ * canvas, so the rendered box IS the visual box - that is what lets the mark
+ * sit level with the wordmark instead of floating inside its own padding.
+ */
+export function Mark({ height = 12 }: { height?: number }) {
+  const width = Math.round((height * 22.7) / 17.1);
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width={width} height={height} viewBox="0.65 3.45 22.7 17.1" fill="none" aria-hidden="true">
       <rect x="1.6" y="4.4" width="20.8" height="15.2" rx="3" stroke="currentColor" strokeWidth="1.9" />
-      <path d="M8.2 12h7.6" stroke="#a78bfa" strokeWidth="1.7" strokeLinecap="round" />
-      <path d="M8.6 9.6 6 12l2.6 2.4M15.4 9.6 18 12l-2.6 2.4" stroke="#a78bfa" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8.2 12h7.6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" opacity="0.75" />
+      <path d="M8.6 9.6 6 12l2.6 2.4M15.4 9.6 18 12l-2.6 2.4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" opacity="0.75" />
     </svg>
   );
 }

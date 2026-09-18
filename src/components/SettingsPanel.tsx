@@ -10,12 +10,13 @@ import type { DisplayInfo, PresetHotkey, Settings } from '../lib/types';
 interface SettingsPanelProps {
   settings: Settings;
   display: DisplayInfo | null;
+  acrylicSupported: boolean;
   onBack: () => void;
   onSet: <K extends keyof Settings>(key: K, value: Settings[K]) => void;
   onRestoreDefaults: () => void;
 }
 
-export function SettingsPanel({ settings, display, onBack, onSet, onRestoreDefaults }: SettingsPanelProps) {
+export function SettingsPanel({ settings, display, acrylicSupported, onBack, onSet, onRestoreDefaults }: SettingsPanelProps) {
   const [accelerator, setAccelerator] = useState('Ctrl+Alt+R');
   const [res, setRes] = useState(display ? `${display.native.width}x${display.native.height}` : '');
   const [error, setError] = useState<string | null>(null);
@@ -44,6 +45,19 @@ export function SettingsPanel({ settings, display, onBack, onSet, onRestoreDefau
 
   return (
     <Panel title="Settings" onBack={onBack}>
+      <div className="card">
+        <Switch
+          checked={settings.translucent && acrylicSupported}
+          onChange={(value) => onSet('translucent', value)}
+          label="Translucent window"
+          description={
+            acrylicSupported
+              ? 'Frosts the desktop behind the window instead of covering it.'
+              : 'Needs the Windows 11 acrylic backdrop, which this build of Windows does not provide.'
+          }
+        />
+      </div>
+
       <div className="card">
         <Switch
           checked={settings.persistMode}

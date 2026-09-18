@@ -84,7 +84,7 @@ export function ProfilesPanel({ settings, display, onBack, onChange, onWatcher }
 
       {profiles.length === 0 ? (
         <div className="empty">
-          Nothing here yet.<br />Add a game below and QuickRes handles the switch on its own.
+          Nothing here yet.<br />Add a game below and Qres handles the switch on its own.
         </div>
       ) : (
         profiles.map((profile) => (

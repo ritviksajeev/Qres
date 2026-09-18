@@ -1,6 +1,6 @@
 'use strict';
 
-// Tray menu. QuickRes is meant to live here - the window is the place you set
+// Tray menu. Qres is meant to live here - the window is the place you set
 // things up, the tray is the place you use it.
 
 const { Tray, Menu, nativeImage } = require('electron');
@@ -39,7 +39,7 @@ async function buildMenu() {
   }
 
   items.push({ type: 'separator' });
-  items.push({ label: 'Open QuickRes', click: () => config.onShow() });
+  items.push({ label: 'Open Qres', click: () => config.onShow() });
   items.push({ label: 'Restore Windows defaults', click: () => config.onRestore() });
   items.push({ type: 'separator' });
   items.push({ label: 'Quit', click: () => config.onQuit() });
@@ -54,7 +54,7 @@ function createTray(options) {
   if (!icon || icon.isEmpty()) icon = nativeImage.createEmpty();
 
   tray = new Tray(icon);
-  tray.setToolTip('QuickRes');
+  tray.setToolTip('Qres');
   tray.on('click', () => config.onShow());
   tray.on('double-click', () => config.onShow());
 

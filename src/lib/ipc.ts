@@ -1,16 +1,16 @@
-import type { QuickResBridge } from './types';
+import type { QresBridge } from './types';
 
 // The app is only ever loaded inside Electron, but a clear failure beats a
 // mystery `undefined` if that ever stops being true.
-const bridge = window.quickres;
+const bridge = window.qres;
 
 if (!bridge) {
   document.body.innerHTML =
-    '<div style="font:14px system-ui;padding:32px;color:#fff">QuickRes must run inside its Electron shell.</div>';
+    '<div style="font:14px system-ui;padding:32px;color:#fff">Qres must run inside its Electron shell.</div>';
   throw new Error('preload bridge missing');
 }
 
-export const qr: QuickResBridge = bridge;
+export const qr: QresBridge = bridge;
 
 export const HOTKEY_CHOICES = [
   'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12',

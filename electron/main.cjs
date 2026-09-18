@@ -3,6 +3,7 @@
 const { app, BrowserWindow, ipcMain, shell, nativeImage, screen } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const os = require('os');
 
 const displays = require('./display.cjs');
 const settings = require('./store.cjs');
@@ -20,8 +21,40 @@ let revert = null;          // { timer, deadline, previous, displayId }
 
 // ---------------------------------------------------------------- window
 
+// Acrylic is a Windows 11 backdrop. On 10 the flag is silently ignored, which
+// would leave a transparent backgroundColor showing nothing at all - so the
+// window only goes see-through where the compositor can actually blur.
+function acrylicSupported() {
+  if (process.platform !== 'win32') return false;
+  const build = Number(String(os.release()).split('.')[2] || 0);
+  return build >= 22000;
+}
+
+function translucentNow() {
+  return !!settings.get('translucent') && acrylicSupported();
+}
+
+function opaqueColor() {
+  return settings.get('theme') === 'light' ? '#f4f4f6' : '#050507';
+}
+
+// Applied on creation and again whenever the theme or the setting changes.
+function applyWindowMaterial() {
+  if (!win || win.isDestroyed()) return;
+  const on = translucentNow();
+  try {
+    win.setBackgroundColor(on ? '#00000000' : opaqueColor());
+    if (typeof win.setBackgroundMaterial === 'function') {
+      win.setBackgroundMaterial(on ? 'acrylic' : 'none');
+    }
+  } catch (_) {
+    // An unsupported build just stays opaque.
+  }
+}
+
 function createWindow() {
   const saved = settings.get('window') || {};
+  const translucent = translucentNow();
   const options = {
     width: saved.width || 400,
     height: saved.height || 704,
@@ -30,12 +63,13 @@ function createWindow() {
     maxWidth: 560,
     show: false,
     frame: false,
-    backgroundColor: settings.get('theme') === 'light' ? '#f4f4f6' : '#050507',
+    backgroundColor: translucent ? '#00000000' : opaqueColor(),
     resizable: true,
     maximizable: false,
     fullscreenable: false,
     autoHideMenuBar: true,
     icon: iconPath(),
+    ...(translucent ? { backgroundMaterial: 'acrylic' } : {}),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true,
@@ -347,6 +381,7 @@ async function buildState() {
     activeId: active ? active.id : null,
     toggle: active ? deriveToggle(active) : null,
     hotkeyActive: !!(state.hotkey && state.hotkey.enabled && hotkeys.isRegistered(state.hotkey.accelerator)),
+    effects: { translucent: translucentNow(), acrylicSupported: acrylicSupported() },
     version: app.getVersion(),
     platform: process.platform,
     error,
@@ -402,9 +437,7 @@ function registerIpc() {
   ipcMain.handle('qr:set', async (_e, { key, value }) => {
     settings.set(key, value);
 
-    if (key === 'theme' && win) {
-      win.setBackgroundColor(value === 'light' ? '#f4f4f6' : '#050507');
-    }
+    if (key === 'theme' || key === 'translucent') applyWindowMaterial();
     if (key === 'hotkey' || key === 'presetHotkeys') await rebindHotkeys();
     if (key === 'watcherEnabled' || key === 'gameProfiles') restartWatcher();
     if (key === 'startOnLogin') {
@@ -470,7 +503,7 @@ if (!app.requestSingleInstanceLock()) {
   app.on('second-instance', showWindow);
 
   app.whenReady().then(async () => {
-    app.setAppUserModelId('org.evzero.quickres');
+    app.setAppUserModelId('org.evzero.qres');
 
     registerIpc();
     createWindow();
@@ -530,7 +563,7 @@ if (!app.requestSingleInstanceLock()) {
     destroyTray();
   });
 
-  // The tray keeps QuickRes alive with no windows open - that is the point.
+  // The tray keeps Qres alive with no windows open - that is the point.
   app.on('window-all-closed', () => {
     if (!settings.get('minimizeToTray')) app.quit();
   });

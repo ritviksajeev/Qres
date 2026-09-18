@@ -1,12 +1,12 @@
 {
-  "name": "quickres",
+  "name": "qres",
   "version": "1.0.0",
   "description": "Change your monitor resolution and refresh rate from a hotkey.",
   "author": "EvZero <hi@evzero.org>",
   "license": "MIT",
   "private": true,
   "main": "electron/main.cjs",
-  "homepage": "https://evzero.org/quickres",
+  "homepage": "https://evzero.org/qres",
   "repository": {
     "type": "git",
     "url": "https://github.com/ritviksajeev/Qres.git"
@@ -42,8 +42,8 @@
     "wait-on": "^8.0.1"
   },
   "build": {
-    "appId": "org.evzero.quickres",
-    "productName": "QuickRes",
+    "appId": "org.evzero.qres",
+    "productName": "Qres",
     "copyright": "Copyright © 2026 EvZero",
     "directories": {
       "output": "release",
@@ -74,11 +74,11 @@
       "oneClick": false,
       "perMachine": false,
       "allowToChangeInstallationDirectory": true,
-      "shortcutName": "QuickRes",
-      "artifactName": "QuickRes-Setup-${version}-win-x64.${ext}"
+      "shortcutName": "Qres",
+      "artifactName": "Qres-Setup-${version}-win-x64.${ext}"
     },
     "portable": {
-      "artifactName": "QuickRes-${version}-win-x64.${ext}"
+      "artifactName": "Qres-${version}-win-x64.${ext}"
     }
   }
 }

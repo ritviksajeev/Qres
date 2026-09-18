@@ -6,7 +6,7 @@ import type { PanelId } from './lib/types.panels';
 
 import { TitleBar } from './components/TitleBar';
 import { Header } from './components/Header';
-import { QuickResolutions } from './components/QuickResolutions';
+import { Resolutions } from './components/Resolutions';
 import { CustomResolution } from './components/CustomResolution';
 import { HotkeyPanel } from './components/HotkeyPanel';
 import { StatusLine } from './components/StatusLine';
@@ -55,9 +55,12 @@ export default function App() {
   }, []);
 
   const theme = state?.settings.theme ?? 'dark';
+  const translucent = state?.effects.translucent ?? false;
+
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-  }, [theme]);
+    document.documentElement.dataset.translucent = translucent ? 'on' : 'off';
+  }, [theme, translucent]);
 
   // A quiet check on launch; the badge in the footer is the only nag.
   useEffect(() => {
@@ -124,7 +127,7 @@ export default function App() {
   const closePanel = () => setPanel(null);
 
   return (
-    <div className="app">
+    <div className={`app${panel ? ' panel-open' : ''}`}>
       <div className="app-grain" aria-hidden="true" />
 
       <TitleBar version={state.version} minimizeToTray={settings.minimizeToTray} />
@@ -151,11 +154,11 @@ export default function App() {
         {state.platform !== 'win32' ? (
           <div className="banner info">
             <span style={{ color: 'var(--purple-bright)' }}><Warning /></span>
-            <span>QuickRes changes display modes through the Windows display API, so the controls stay inert here.</span>
+            <span>Qres changes display modes through the Windows display API, so the controls stay inert here.</span>
           </div>
         ) : null}
 
-        <QuickResolutions
+        <Resolutions
           presets={presets}
           display={display}
           busy={busy}
@@ -209,6 +212,7 @@ export default function App() {
         <SettingsPanel
           settings={settings}
           display={display}
+          acrylicSupported={state.effects.acrylicSupported}
           onBack={closePanel}
           onSet={set}
           onRestoreDefaults={() => void qr.restoreDefaults().then(refreshDisplays)}

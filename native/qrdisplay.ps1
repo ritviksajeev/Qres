@@ -4,6 +4,6 @@
 param([Parameter(ValueFromRemainingArguments = $true)][string[]]$CliArgs)
 
 $ErrorActionPreference = 'Stop'
-$source = Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'QuickResDisplay.cs')
+$source = Get-Content -Raw -LiteralPath (Join-Path $PSScriptRoot 'QresDisplay.cs')
 Add-Type -TypeDefinition $source -Language CSharp | Out-Null
-[QuickRes.Program]::Main($CliArgs) | Out-Null
+[Qres.Program]::Main($CliArgs) | Out-Null

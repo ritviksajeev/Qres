@@ -14,5 +14,6 @@ First release.
 - Custom resolution entry with driver validation
 - Tray menu with the current mode and both toggle targets
 - Start with Windows, start minimised, close to tray
+- Translucent acrylic window on Windows 11, with every surface as a frosted layer
 - Light and dark themes
 - Update check against GitHub releases

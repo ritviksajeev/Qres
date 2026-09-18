@@ -7,8 +7,8 @@ export function TitleBar({ version, minimizeToTray }: { version: string; minimiz
   return (
     <div className="titlebar">
       <div className="brand">
-        <span className="brand-mark"><Mark size={15} /></span>
-        <span className="brand-name">QuickRes</span>
+        <span className="brand-mark"><Mark height={12} /></span>
+        <span className="brand-name">Qres</span>
         <span className="brand-version">{version}</span>
       </div>
 

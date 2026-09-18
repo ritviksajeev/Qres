@@ -19,13 +19,13 @@ let listCache = null;     // { at, value }
 function nativeDir() {
   // Packaged builds copy native/ next to the asar as an unpacked resource.
   const packaged = path.join(process.resourcesPath || '', 'native');
-  if (fs.existsSync(path.join(packaged, 'QuickResDisplay.cs'))) return packaged;
+  if (fs.existsSync(path.join(packaged, 'QresDisplay.cs'))) return packaged;
   return path.join(__dirname, '..', 'native');
 }
 
 function binDir() {
   const base = process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local');
-  const dir = path.join(base, 'QuickRes', 'bin');
+  const dir = path.join(base, 'Qres', 'bin');
   fs.mkdirSync(dir, { recursive: true });
   return dir;
 }
@@ -68,10 +68,10 @@ function compile(source, out, csc) {
 // Returns { kind: 'exe', exe } or { kind: 'powershell', script }.
 async function helper() {
   if (resolved) return resolved;
-  if (!IS_WINDOWS) throw new Error('QuickRes can only change display modes on Windows.');
+  if (!IS_WINDOWS) throw new Error('Qres can only change display modes on Windows.');
 
   const dir = nativeDir();
-  const source = path.join(dir, 'QuickResDisplay.cs');
+  const source = path.join(dir, 'QresDisplay.cs');
   if (!fs.existsSync(source)) throw new Error('Display helper source is missing from the install.');
 
   // Key the cached binary on the source so an app update rebuilds it once.
@@ -90,7 +90,7 @@ async function helper() {
       resolved = { kind: 'exe', exe };
       return resolved;
     } catch (err) {
-      console.warn('[quickres] could not build the display helper, falling back to PowerShell:', err.message);
+      console.warn('[qres] could not build the display helper, falling back to PowerShell:', err.message);
     }
   }
 
@@ -221,7 +221,7 @@ async function currentFor(target) {
 // Warms the helper (and builds it if needed) without blocking startup.
 function warmUp() {
   return helper().then(() => list({ force: true })).catch((err) => {
-    console.warn('[quickres] display warm-up failed:', err.message);
+    console.warn('[qres] display warm-up failed:', err.message);
     return null;
   });
 }

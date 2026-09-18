@@ -10,7 +10,7 @@ const listen = (channel) => (handler) => {
   return () => ipcRenderer.removeListener(channel, wrapped);
 };
 
-contextBridge.exposeInMainWorld('quickres', {
+contextBridge.exposeInMainWorld('qres', {
   getState: () => ipcRenderer.invoke('qr:get-state'),
   refreshDisplays: () => ipcRenderer.invoke('qr:refresh-displays'),
 

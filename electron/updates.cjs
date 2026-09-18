@@ -11,7 +11,7 @@ function fetchJson(url) {
   return new Promise((resolve, reject) => {
     const request = net.request({ method: 'GET', url });
     request.setHeader('Accept', 'application/vnd.github+json');
-    request.setHeader('User-Agent', `QuickRes/${app.getVersion()}`);
+    request.setHeader('User-Agent', `Qres/${app.getVersion()}`);
 
     const timeout = setTimeout(() => {
       try { request.abort(); } catch (_) { /* already finished */ }

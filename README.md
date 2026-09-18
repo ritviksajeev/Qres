@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="build/icon.png" width="88" alt="QuickRes" />
+<img src="build/icon.png" width="88" alt="Qres" />
 
-# QuickRes
+# Qres
 
 **Change your monitor's resolution and refresh rate from a hotkey.**
 
@@ -10,7 +10,7 @@ Built for stretched-res players who are tired of Windows Settings → System →
 
 Windows 10/11 · x64 · MIT
 
-<img src="docs/screenshot-dark.png" width="360" alt="QuickRes window" />
+<img src="docs/screenshot-dark.png" width="360" alt="Qres window" />
 
 </div>
 
@@ -30,19 +30,21 @@ That is the whole product. Everything else exists to make that one thing reliabl
 
 **Extra hotkeys** — Bind additional keys straight to a single resolution, on top of the toggle.
 
-**Refresh rate control** — Every change carries a refresh rate. Leave it on *Highest available* and QuickRes asks the display for its fastest rate **at that resolution**, so dropping to 1440×1080 keeps your 240 Hz instead of quietly falling back to 60. Or pin a specific rate.
+**Refresh rate control** — Every change carries a refresh rate. Leave it on *Highest available* and Qres asks the display for its fastest rate **at that resolution**, so dropping to 1440×1080 keeps your 240 Hz instead of quietly falling back to 60. Or pin a specific rate.
 
 **Per-monitor targeting** — `Auto` changes whichever monitor your mouse is on when the hotkey fires, which is the one you are playing on. Or pin a specific display.
 
-**Game profiles** — Name a process (`VALORANT-Win64-Shipping.exe`) and a resolution. QuickRes switches when the game launches and puts native back when it exits. No hotkey needed.
+**Game profiles** — Name a process (`VALORANT-Win64-Shipping.exe`) and a resolution. Qres switches when the game launches and puts native back when it exits. No hotkey needed.
 
 **Safety net** — A change made in the window starts a 15-second countdown and reverts itself if you never confirm, so a mode your monitor cannot display never leaves you staring at a black screen. Hotkey and game-profile switches skip the dialog on purpose — nothing should land on top of your game.
 
-**Custom resolution** — Type anything. QuickRes validates it against the driver before applying.
+**Custom resolution** — Type anything. Qres validates it against the driver before applying.
 
 **Tray resident** — Closing the window keeps the hotkey live. The tray menu shows the current mode and both toggle targets.
 
 **Start with Windows** — Launches hidden, so the hotkey works before you open anything.
+
+**Translucent** — On Windows 11 the window uses the acrylic backdrop, so it frosts the desktop behind it rather than covering it. Every panel, tile and field is a frosted layer over that. Turn it off in Settings; on Windows 10, where there is no acrylic backdrop to use, it stays opaque.
 
 **Light and dark** — Same purple either way.
 
@@ -50,14 +52,14 @@ That is the whole product. Everything else exists to make that one thing reliabl
 
 Grab the latest from [Releases](https://github.com/ritviksajeev/Qres/releases):
 
-- **`QuickRes-Setup-x.y.z-win-x64.exe`** — installer, adds a Start Menu entry
-- **`QuickRes-x.y.z-win-x64.zip`** — portable, extract and run
+- **`Qres-Setup-x.y.z-win-x64.exe`** — installer, adds a Start Menu entry
+- **`Qres-x.y.z-win-x64.zip`** — portable, extract and run
 
 No admin needed. There is no code-signing certificate yet, so SmartScreen may warn on first launch — *More info → Run anyway*.
 
 ## Stretched resolution actually looking stretched
 
-QuickRes sets the resolution. Whether the image fills your panel or sits in black bars is your **GPU scaling** setting, and no application can change that for you:
+Qres sets the resolution. Whether the image fills your panel or sits in black bars is your **GPU scaling** setting, and no application can change that for you:
 
 | GPU | Where |
 |---|---|
@@ -67,25 +69,25 @@ QuickRes sets the resolution. Whether the image fills your panel or sits in blac
 
 Set it once. It sticks.
 
-If a resolution you want is not in the grid, your display does not advertise it — create it in your GPU control panel (NVIDIA: *Change resolution → Customize → Create Custom Resolution*) and QuickRes picks it up. Modes marked with an amber dot are suggestions your display did not list; clicking still tries, and the driver will refuse if it cannot do it.
+If a resolution you want is not in the grid, your display does not advertise it — create it in your GPU control panel (NVIDIA: *Change resolution → Customize → Create Custom Resolution*) and Qres picks it up. Modes marked with an amber dot are suggestions your display did not list; clicking still tries, and the driver will refuse if it cannot do it.
 
 ## Can this get me banned?
 
-No. QuickRes calls `ChangeDisplaySettingsEx` — the same Windows API the Settings app uses. Nothing is injected into any process, no game memory is read, no input is synthesised. The global hotkey uses Electron's `globalShortcut`, which is an OS-level key reservation, not a keyboard hook.
+No. Qres calls `ChangeDisplaySettingsEx` — the same Windows API the Settings app uses. Nothing is injected into any process, no game memory is read, no input is synthesised. The global hotkey uses Electron's `globalShortcut`, which is an OS-level key reservation, not a keyboard hook.
 
 ## How it works
 
-Node cannot call Win32 display APIs on its own, and shipping a prebuilt binary or a native module means an ABI to keep matched. QuickRes takes a third route:
+Node cannot call Win32 display APIs on its own, and shipping a prebuilt binary or a native module means an ABI to keep matched. Qres takes a third route:
 
-1. `native/QuickResDisplay.cs` is a ~500-line Win32 CLI that enumerates displays and applies modes, printing JSON.
-2. On first launch the app compiles it with the `csc.exe` that already ships inside Windows (`%WINDIR%\Microsoft.NET\Framework64\v4.0.30319`) and caches the result in `%LOCALAPPDATA%\QuickRes\bin`, keyed by a hash of the source.
+1. `native/QresDisplay.cs` is a ~500-line Win32 CLI that enumerates displays and applies modes, printing JSON.
+2. On first launch the app compiles it with the `csc.exe` that already ships inside Windows (`%WINDIR%\Microsoft.NET\Framework64\v4.0.30319`) and caches the result in `%LOCALAPPDATA%\Qres\bin`, keyed by a hash of the source.
 3. Every call after that is a ~20 ms `execFile`.
 
 No SDK to install, no `node-gyp`, no committed binary, and the helper is independently runnable if you ever want to debug it:
 
 ```
-%LOCALAPPDATA%\QuickRes\bin\qrdisplay-<hash>.exe list
-%LOCALAPPDATA%\QuickRes\bin\qrdisplay-<hash>.exe set --display auto --width 1440 --height 1080 --refresh max
+%LOCALAPPDATA%\Qres\bin\qrdisplay-<hash>.exe list
+%LOCALAPPDATA%\Qres\bin\qrdisplay-<hash>.exe set --display auto --width 1440 --height 1080 --refresh max
 ```
 
 If `csc.exe` is missing, it falls back to compiling the same source in-memory through PowerShell.
@@ -94,8 +96,8 @@ If `csc.exe` is missing, it falls back to compiling the same source in-memory th
 
 | Path | What |
 |---|---|
-| `%APPDATA%\QuickRes\quickres.json` | settings, hotkeys, game profiles |
-| `%LOCALAPPDATA%\QuickRes\bin\` | the compiled display helper |
+| `%APPDATA%\Qres\qres.json` | settings, hotkeys, game profiles |
+| `%LOCALAPPDATA%\Qres\bin\` | the compiled display helper |
 
 Both are safe to delete; both are rebuilt.
 
@@ -119,7 +121,7 @@ electron/
   updates.cjs    GitHub releases check
   store.cjs      persisted settings
 native/
-  QuickResDisplay.cs   the Win32 layer
+  QresDisplay.cs   the Win32 layer
 src/             React renderer (TypeScript)
 ```
 

@@ -6,7 +6,7 @@ const FAQ: { q: string; a: JSX.Element }[] = [
     a: (
       <>
         <p>
-          QuickRes sets the resolution. Whether the picture is stretched across the panel or letterboxed is your
+          Qres sets the resolution. Whether the picture is stretched across the panel or letterboxed is your
           GPU's scaling setting, and no app can change that for you.
         </p>
         <p>
@@ -31,7 +31,7 @@ const FAQ: { q: string; a: JSX.Element }[] = [
         </p>
         <p>
           To make one real, add a custom resolution in your GPU control panel (NVIDIA: Change resolution → Customize →
-          Create Custom Resolution) and QuickRes picks it up on the next refresh.
+          Create Custom Resolution) and Qres picks it up on the next refresh.
         </p>
       </>
     ),
@@ -49,7 +49,7 @@ const FAQ: { q: string; a: JSX.Element }[] = [
     q: 'Can this get me banned?',
     a: (
       <p>
-        No. QuickRes calls <code>ChangeDisplaySettingsEx</code> - the same Windows API the Settings app uses. Nothing is
+        No. Qres calls <code>ChangeDisplaySettingsEx</code> - the same Windows API the Settings app uses. Nothing is
         injected, no game memory is read, no input is synthesised. The global hotkey uses Electron's standard
         registration, which is an OS-level key reservation, not a keyboard hook.
       </p>
@@ -59,7 +59,7 @@ const FAQ: { q: string; a: JSX.Element }[] = [
     q: 'My screen went black after a change.',
     a: (
       <p>
-        Wait 15 seconds - QuickRes puts the old mode back on its own if you never confirm. That guard runs on changes
+        Wait 15 seconds - Qres puts the old mode back on its own if you never confirm. That guard runs on changes
         made in the window; hotkey and game-profile switches skip it so a dialog never lands on top of your game.
       </p>
     ),
@@ -86,8 +86,8 @@ const FAQ: { q: string; a: JSX.Element }[] = [
     q: 'Where does it keep my settings?',
     a: (
       <p>
-        <code>%APPDATA%\QuickRes\quickres.json</code>. The small display helper it builds on first run is cached in
-        <code>%LOCALAPPDATA%\QuickRes\bin</code>. Deleting either is safe - both are rebuilt.
+        <code>%APPDATA%\Qres\qres.json</code>. The small display helper it builds on first run is cached in
+        <code>%LOCALAPPDATA%\Qres\bin</code>. Deleting either is safe - both are rebuilt.
       </p>
     ),
   },
